@@ -1,0 +1,31 @@
+name: Build Windows app
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Build viewer and copy into the app
+        shell: bash
+        run: |
+          node viewer/build.js
+          cp viewer/dist/FabSteelViewer.html electron/app/
+      - name: Build Electron app
+        working-directory: electron
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          npm install
+          npx electron-builder --win portable nsis --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FabSteelViewer-windows
+          path: electron/dist/*.exe
