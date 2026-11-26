@@ -1,0 +1,28 @@
+name: Build Tekla Exporter
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  exporter:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '8.0.x' }
+      - name: Build FabSteelExport
+        working-directory: tekla-plugin
+        run: dotnet build FabSteelExport.csproj -c Release -o dist
+      - name: Collect files
+        shell: bash
+        run: |
+          mkdir -p out/dist
+          cp tekla-plugin/dist/FabSteelExport.exe* out/dist/
+          cp tekla-plugin/install.bat tekla-plugin/restore.bat out/
+          cp -r tekla-plugin/macro out/macro
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FabSteel-Tekla-Exporter
+          path: out
