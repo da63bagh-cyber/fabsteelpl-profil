@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0a0d12">
+<title>FAB STEEL VIEWER</title>
+<link rel="icon" href="/*LOGO*/">
+<style>/*CSS*/</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <span class="logowrap"><img class="logo" alt="FabSteel" src="/*LOGO*/"></span>
+    <div class="brand"><b>FabSteel</b><em>Structural Installer</em><small>هوشمندسازی نصب سازه‌های فلزی</small></div>
+    <div class="hgap"></div>
+    <div class="credit">instagram: fabsteel_9191<br>programer eng davod bagheri</div>
+    <button class="hbtn" id="btnDemo">نمونه آزمایشی</button>
+    <button class="hbtn pri" id="btnOpen">📂 باز کردن فایل</button>
+    <button class="hbtn" id="btnExport" disabled>📤 خروجی موبایل</button>
+    <button class="hbtn" id="btnSet" title="تنظیمات">⚙</button>
+    <button class="hbtn" id="btnHome" title="صفحه اصلی">🏠</button>
+    <input type="file" id="fileIn" hidden>
+  </header>
+  <div id="main">
+    <nav id="nav">
+      <button data-sec="locate"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/><path d="M10.5 7.5v6M7.5 10.5h6" /></svg></span><span>موقعیت اسمبلی در سازه<small>جستجو + نمایش سه‌بعدی</small></span></button>
+      <button data-sec="tree"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4v16M5 8h7M5 14h7M5 20h7"/><rect x="13" y="6" width="6" height="4" rx="1"/><rect x="13" y="12" width="6" height="4" rx="1"/><rect x="13" y="18" width="6" height="3" rx="1"/></svg></span><span>مشخصات اسمبلی (درختی)<small>تراز، گرید، پیچ، قطعات متصل</small></span></button>
+      <button data-sec="grid"><span class="ic"><svg viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="6" cy="6" r="1.8"/><circle cx="12" cy="6" r="1.8"/><circle cx="18" cy="6" r="1.8"/><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/><circle cx="6" cy="18" r="1.8"/><circle cx="12" cy="18" r="1.8"/><circle cx="18" cy="18" r="1.8"/></g></svg></span><span>جستجوی گرید<small>همه اسمبلی‌های یک گرید</small></span></button>
+      <button data-sec="level"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12.5l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></span><span>جستجوی تراز<small>اسمبلی‌های یک تراز</small></span></button>
+      <button data-sec="bolt"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l7.5 4.3v8.6L12 21l-7.5-4.3V7.3z"/><circle cx="12" cy="12" r="3"/></svg></span><span>پیچ و مهره<small>قطر و طول پیچ</small></span></button>
+      <div class="banner" title="IRAN — Engineering Nation"><img src="/*BANNER*/" alt="IRAN Engineering Nation"></div>
+    </nav>
+    <section id="stage">
+      <canvas id="cv"></canvas>
+      <div class="tools">
+        <button class="tb" data-view="iso">ایزو</button>
+        <button class="tb" data-view="top">بالا</button>
+        <button class="tb" data-view="front">روبرو</button>
+        <button class="tb" data-view="side">کنار</button>
+        <button class="tb" data-view="fit">⤢ همه</button>
+        <button class="tb" id="btnClear">✕ پاک‌کردن انتخاب</button>
+        <label class="tg"><input type="checkbox" id="tgGrid" checked>گرید</label>
+        <label class="tg"><input type="checkbox" id="tgLvl" checked>تراز</label>
+        <label class="tg"><input type="checkbox" id="tgLbl" checked>برچسب</label>
+    <label class="tg"><input type="checkbox" id="tgGhost" checked>سایر قطعات</label>
+      </div>
+      <div id="empty"><div><img class="emptylogo" id="emptyLogo" alt="FabSteel"><br>فایل <b>.fabsteel</b> خروجی تکلا را باز کنید<br>یا «نمونه آزمایشی» را بزنید<br><span class="muted">فایل را می‌توانید روی همین صفحه رها (Drag &amp; Drop) کنید</span></div></div>
+      <div class="hint">چرخش: درگ · جابجایی: راست‌کلیک/دو انگشت · زوم: چرخ ماوس/پینچ · کلیک روی قطعه = انتخاب</div>
+    </section>
+    <aside>
+      <div id="panelHead" data-dyn></div>
+      <div id="panelBody" data-dyn></div>
+    </aside>
+  </div>
+  <footer id="statusBar" data-dyn>فایلی باز نشده است.</footer>
+</div>
+
+<div id="printRoot" data-dyn></div>
+
+<div class="modal" id="dlgExport"><div class="mbox">
+  <h3>📤 خروجی برای اپلیکیشن موبایل</h3>
+  <div class="opt"><b>۱) فایل فشرده .fabsteel</b><p>کم‌حجم‌ترین حالت؛ در اپلیکیشن اندروید با «باز کردن فایل» (یا اشتراک‌گذاری از تلگرام/واتساپ) باز می‌شود.</p>
+    <button class="btn" id="exBin">ذخیره .fabsteel</button> <span class="muted" id="exBinInfo"></span></div>
+  <div class="opt"><b>۲) HTML تک‌فایل (بدون نیاز به نصب)</b><p>نرم‌افزار + مدل در یک فایل؛ روی هر موبایل با مرورگر باز می‌شود و آفلاین کار می‌کند.</p>
+    <button class="btn sec" id="exHtml">ذخیره HTML</button> <span class="muted" id="exHtmlInfo"></span></div>
+  <div class="row-actions"><button class="btn sec" data-close>بستن</button></div>
+</div></div>
+
+<div class="modal" id="dlgSet"><div class="mbox">
+  <h3>⚙ تنظیمات دقت جستجو</h3>
+  <label>تلرانس گرید (میلی‌متر)<input type="number" id="setGrid" min="0" step="50"></label>
+  <label>تلرانس تراز (میلی‌متر)<input type="number" id="setLvl" min="0" step="10"></label>
+  <p class="muted" style="font-size:12px;line-height:1.8">قطعه‌ای «روی گرید» حساب می‌شود که ابتدا یا انتهای محور آن در این فاصله از خط گرید باشد. قطعه «در تراز» است اگر سطح بالا یا پایین آن در این فاصله از تراز باشد.</p>
+  <div class="row-actions"><button class="btn" id="setOk">اعمال</button><button class="btn sec" data-close>بستن</button></div>
+</div></div>
+
+<div id="home" hidden>
+  <img id="homeBgImg" class="homebg" alt="">
+  <div class="homebox">
+    <img id="homeImg" src="/*HOME*/" alt="FabSteel">
+    <button class="hp" data-go="locate" style="top:43%;height:8.9%" aria-label="موقعیت قطعه روی سازه"></button>
+    <button class="hp" data-go="tree" style="top:52.2%;height:8.5%" aria-label="مشخصات اسمبلی قطعه"></button>
+    <button class="hp" data-go="grid" style="top:61.2%;height:8.5%" aria-label="ردیابی قطعات در بخش گریدها"></button>
+    <button class="hp" data-go="level" style="top:70.2%;height:8.5%" aria-label="ردیابی قطعات در بخش ترازها"></button>
+    <button class="hp" data-go="bolt" style="top:79.2%;height:9.2%" aria-label="ردیابی پیچ و مهره سازه"></button>
+    <div class="htop"><button id="hOpen">📂 باز کردن فایل</button><button id="hDemo">نمونه آزمایشی</button></div>
+    <div class="hstat" id="homeStat"></div>
+  </div>
+</div>
+<div id="splash"><div class="sp-in">
+  <div class="sp-ring"><img id="spImg" alt="FabSteel" src="/*LOGOBIG*/"></div>
+  <div class="sp-t">FAB STEEL <b>VIEWER</b></div>
+  <div class="sp-s">Smart Steel Construction</div>
+  <div class="sp-p">programer eng davod bagheri</div>
+  <div class="sp-bar"><i></i></div>
+</div></div>
+<div id="toast"></div>
+<script id="embeddedData" type="text/plain" data-fmt=""></script>
+<script>/*CORE*/</script>
+<script>/*PDFSCAN*/</script>
+<script>/*R3D*/</script>
+<script>/*APP*/</script>
+</body>
+</html>

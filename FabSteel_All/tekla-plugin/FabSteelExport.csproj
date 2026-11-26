@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- FabSteel Export — Tekla Structures 2024 Open API tool (.NET Framework 4.8, WinForms).
+       Open Tekla with a model, run FabSteelExport.exe, press "Export".  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>FabSteelExport</RootNamespace>
+    <AssemblyName>FabSteelExport</AssemblyName>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Nullable>disable</Nullable>
+    <!-- Change this if Tekla is installed elsewhere -->
+    <TeklaBin Condition="'$(TeklaBin)' == ''">C:\Program Files\Tekla Structures\2024.0\bin</TeklaBin>
+  </PropertyGroup>
+
+  <!-- The macro is compiled by Tekla itself (it needs Tekla.Technology.Akit) - keep it out of this build -->
+  <ItemGroup>
+    <Compile Remove="macro\**" />
+    <Compile Remove="dist\**" />
+    <None Remove="macro\**" />
+  </ItemGroup>
+
+  <!-- Local build: use the DLLs of the installed Tekla. Cloud/GitHub build (Tekla not installed): use the official NuGet packages (compile-only). -->
+  <ItemGroup Condition="Exists('$(TeklaBin)\Tekla.Structures.Model.dll')">
+    <Reference Include="Tekla.Structures">
+      <HintPath>$(TeklaBin)\Tekla.Structures.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Tekla.Structures.Model">
+      <HintPath>$(TeklaBin)\Tekla.Structures.Model.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="!Exists('$(TeklaBin)\Tekla.Structures.Model.dll')">
+    <PackageReference Include="Tekla.Structures.Model" Version="2024.0.0" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Tekla loads its own assemblies from its bin folder: keep the exe next to them or let
+       Tekla's bin be on the probing path. Simplest: copy FabSteelExport.exe into the Tekla bin\applications folder. -->
+</Project>
