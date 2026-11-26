@@ -1,0 +1,12 @@
+node_modules/
+electron/dist/
+android/build/
+android/app/build/
+android/.gradle/
+local.properties
+*.iml
+.idea/
+tekla-plugin/dist/
+tekla-plugin/bin/
+tekla-plugin/obj/
+.vs/
