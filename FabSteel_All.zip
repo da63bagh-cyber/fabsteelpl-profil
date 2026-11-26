@@ -1,1 +1,2 @@
+unzip -q -o ./*.zip -d work 
 unzip -q -o "$(find . -name '*.zip' -not -path './work/*' | head -1)" -d work
